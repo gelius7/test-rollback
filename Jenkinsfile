@@ -38,7 +38,7 @@ podTemplate(label: label, containers: [
 
         echo "Input your namespace"
         param = input(message:'Input Parameters ', parameters: [
-            [$class: 'ChoiceParameterDefinition', choices: '${nmspace_list}', description: 'Select cluster', name: 'sel_cluster']
+            [$class: 'ChoiceParameterDefinition', choices: nmspace_list, description: 'Select cluster', name: 'sel_cluster']
 //            [$class: 'TextParameterDefinition', defaultValue: ${namespace}, description: 'Select Namespace', name: 'sel_namespace']
         ])
         namespace = param

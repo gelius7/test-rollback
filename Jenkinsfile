@@ -25,14 +25,16 @@ podTemplate(label: label, containers: [
   // hostPathVolume(mountPath: "/home/jenkins/.helm", hostPath: "/home/jenkins/.helm")
 ]) {
   node(label) {
-    stage("Input Parameters") {
+    stage("Select cluster") {
       container("builder") {
-        echo "Select cluster"
         param = input(message:'Input Parameters ', parameters: [
             [$class: 'ChoiceParameterDefinition', choices: "dev\nstage\nokc1", description: 'Select cluster', name: 'sel_cluster']
         ])
-
         cluster = param
+      }
+    }
+    stage("Select namespace") {
+      container("builder") {
         def nmspace_list = butler.scan_helm(cluster)
         echo nmspace_list
 
@@ -41,6 +43,10 @@ podTemplate(label: label, containers: [
             [$class: 'ChoiceParameterDefinition', choices: nmspace_list, description: 'Select cluster', name: 'sel_cluster']
         ])
         namespace = param
+      }
+    }
+    stage("Select Image") {
+      container("builder") {
         def list = butler.scan_helm_namespace(namespace)
 
         echo "Select your Image"
@@ -49,6 +55,10 @@ podTemplate(label: label, containers: [
         ])
 
         image = param
+      }
+    }
+    stage("Rollback") {
+      container("builder") {
         echo ("cluster : " + cluster)
         echo ("namespace : " + namespace)
         echo ("image : " + image)
@@ -56,15 +66,6 @@ podTemplate(label: label, containers: [
           helm rollback ${image} 0
           helm history ${image}
         """
-      }
-    }
-    stage("Rollback") {
-      container("builder") {
-        // cluster, namespace, revision
-//        butler.rollback()
-        echo cluster
-        echo namespace
-        echo revision
       }
     } 
   }

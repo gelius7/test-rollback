@@ -33,11 +33,13 @@ podTemplate(label: label, containers: [
         ])
 
         cluster = param
-        butler.scan_helm(cluster)
+        def nmspace_list = butler.scan_helm(cluster)
+        echo nmspace_list
 
         echo "Input your namespace"
         param = input(message:'Input Parameters ', parameters: [
-            [$class: 'TextParameterDefinition', defaultValue: '${namespace}', description: 'Select Namespace', name: 'sel_namespace']
+            [$class: 'ChoiceParameterDefinition', choices: '${nmspace_list}', description: 'Select cluster', name: 'sel_cluster']
+//            [$class: 'TextParameterDefinition', defaultValue: ${namespace}, description: 'Select Namespace', name: 'sel_namespace']
         ])
         namespace = param
         def list = butler.scan_helm_namespace(namespace)

@@ -1,14 +1,4 @@
-def SERVICE_GROUP = "svc-grp"
-def SERVICE_NAME = "svc-name"
-def IMAGE_NAME = "${SERVICE_GROUP}-${SERVICE_NAME}"
-def REPOSITORY_URL = "https://github.com/gelius7/test-spring-boot.git"
-def REPOSITORY_SECRET = ""
-def SLACK_TOKEN_DEV = ""
-def SLACK_TOKEN_DQA = ""
-
-def cluster = "cc"
-def namespace = "nn"
-def revision = "rr"
+def cluster = ""
 
 @Library("github.com/gelius7/valve-butler")
 def butler = new com.opsnow.valve.v8.Butler()
@@ -27,30 +17,19 @@ podTemplate(label: label, containers: [
   node(label) {
     stage("Select cluster") {
       container("builder") {
-        param = input(message:'Input Parameters ', parameters: [
+        echo "Select cluster" 
+        param = input(message:'Select cluster ', parameters: [
             [$class: 'ChoiceParameterDefinition', choices: "dev\nstage\nokc1", description: 'Select cluster', name: 'sel_cluster']
         ])
         cluster = param
       }
     }
-//    stage("Select namespace") {
-//      container("builder") {
-//        def nmspace_list = butler.scan_helm(cluster)
-//        echo nmspace_list
-//
-//        echo "Select your namespace"
-//        param = input(message:'Input Parameters ', parameters: [
-//            [$class: 'ChoiceParameterDefinition', choices: nmspace_list, description: 'Select cluster', name: 'sel_cluster']
-//        ])
-//        namespace = param
-//      }
-//    }
     stage("Select Image") {
       container("builder") {
-        def list = butler.scan_helm_namespace(namespace,cluster)
+        def list = butler.scan_helm(cluster)
 
         echo "Select your Image"
-        param = input(message:'Input Parameters ', parameters: [
+        param = input(message:'Select Image ', parameters: [
             [$class: 'ChoiceParameterDefinition', choices: list, description: 'Select cluster', name: 'sel_image']
         ])
 
@@ -59,9 +38,6 @@ podTemplate(label: label, containers: [
     }
     stage("Rollback") {
       container("builder") {
-        echo ("cluster : " + cluster)
-        echo ("namespace : " + namespace)
-        echo ("image : " + image)
         sh """
           helm rollback ${image} 0
           helm history ${image}

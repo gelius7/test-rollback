@@ -27,6 +27,7 @@ podTemplate(label: label, containers: [
   node(label) {
     stage("Input Parameters") {
       container("builder") {
+        echo "Select cluster"
         param = input(message:'Input Parameters ', parameters: [
             [$class: 'ChoiceParameterDefinition', choices: "dev\nstage\nokc1", description: 'Select cluster', name: 'sel_cluster']
         ])
@@ -34,14 +35,16 @@ podTemplate(label: label, containers: [
         cluster = param
         butler.scan_helm(cluster)
 
+        echo "Input your namespace"
         param = input(message:'Input Parameters ', parameters: [
             [$class: 'TextParameterDefinition', defaultValue: '${namespace}', description: 'Select Namespace', name: 'sel_namespace']
         ])
         namespace = param
-        butler.scan_helm_namespace(namespace)
+        def list = butler.scan_helm_namespace(namespace)
 
         echo ("user input : " + cluster)
         echo ("user input : " + namespace)
+        echo list
       }
     }
     stage("Rollback") {

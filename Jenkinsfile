@@ -10,7 +10,6 @@ def cluster = "cc"
 def namespace = "nn"
 def revision = "rr"
 
-//@Library("github.com/opsnow-tools/valve-butler")
 @Library("github.com/gelius7/valve-butler")
 def butler = new com.opsnow.valve.v8.Butler()
 def label = "worker-${UUID.randomUUID().toString()}"
@@ -27,16 +26,16 @@ podTemplate(label: label, containers: [
 ]) {
   node(label) {
     stage("Input Parameters") {
-      echo "start"
-      param = input(message:'Select cluster', parameters: [
-          [$class: 'ChoiceParameterDefinition', choices: "dev\nstage\nokc1", description: 'test select one', name: 'sel_cluster']
-          [$class: 'ChoiceParameterDefinition', choices: "dev\nstage\nokc1", description: 'test select one', name: 'sel_namespace']
-      ])
-      cluster = param['sel_cluster']
-      namespace = param['sel_namespace']
-      echo ("user input : " + cluster)
-      echo ("user input : " + namespace)
       container("builder") {
+        echo "start"
+        param = input(message:'Select cluster', parameters: [
+            [$class: 'ChoiceParameterDefinition', choices: "dev\nstage\nokc1", description: 'test select one', name: 'sel_cluster']
+            [$class: 'ChoiceParameterDefinition', choices: "dev\nstage\nokc1", description: 'test select one', name: 'sel_namespace']
+        ])
+        cluster = param['sel_cluster']
+        namespace = param['sel_namespace']
+        echo ("user input : " + cluster)
+        echo ("user input : " + namespace)
 //        butler.env_cluster(cluster)
         butler.scan_helm(cluster, namespace)
       }

@@ -27,6 +27,7 @@ podTemplate(label: label, containers: [
 ]) {
   node(label) {
     stage("Input Parameters") {
+      echo "start"
       param = input(message:'Select cluster', parameters: [
           [$class: 'ChoiceParameterDefinition', choices: "dev\nstage\nokc1", description: 'test select one', name: 'sel_cluster']
           [$class: 'ChoiceParameterDefinition', choices: "dev\nstage\nokc1", description: 'test select one', name: 'sel_namespace']

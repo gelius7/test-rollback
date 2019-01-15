@@ -32,13 +32,13 @@ podTemplate(label: label, containers: [
         ])
 
         cluster = param
-        butler.scan_helm(cluster, namespace)
+        butler.scan_helm(cluster)
 
         param = input(message:'Input Parameters ', parameters: [
-            [$class: 'TextParameterDefinition', defaultValue: $namespace, description: 'Select Namespace', name: 'sel_namespace']
+            [$class: 'TextParameterDefinition', defaultValue: '${namespace}', description: 'Select Namespace', name: 'sel_namespace']
         ])
         namespace = param
-        butler.scan_helm_namespace()
+        butler.scan_helm_namespace(namespace)
 
         echo ("user input : " + cluster)
         echo ("user input : " + namespace)

@@ -36,17 +36,26 @@ podTemplate(label: label, containers: [
         def nmspace_list = butler.scan_helm(cluster)
         echo nmspace_list
 
-        echo "Input your namespace"
+        echo "Select your namespace"
         param = input(message:'Input Parameters ', parameters: [
             [$class: 'ChoiceParameterDefinition', choices: nmspace_list, description: 'Select cluster', name: 'sel_cluster']
-//            [$class: 'TextParameterDefinition', defaultValue: ${namespace}, description: 'Select Namespace', name: 'sel_namespace']
         ])
         namespace = param
         def list = butler.scan_helm_namespace(namespace)
 
-        echo ("user input : " + cluster)
-        echo ("user input : " + namespace)
-        echo list
+        echo "Select your Image"
+        param = input(message:'Input Parameters ', parameters: [
+            [$class: 'ChoiceParameterDefinition', choices: list, description: 'Select cluster', name: 'sel_image']
+        ])
+
+        image = param
+        echo ("cluster : " + cluster)
+        echo ("namespace : " + namespace)
+        echo ("image : " + image)
+        sh """
+          helm rollback ${image} 0
+          helm history ${image}
+        """
       }
     }
     stage("Rollback") {

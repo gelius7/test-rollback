@@ -27,13 +27,17 @@ podTemplate(label: label, containers: [
 ]) {
   node(label) {
     stage("Input Parameters") {
-      cluster = input(message:'Select cluster', parameters: [
-          [$class: 'ChoiceParameterDefinition', choices: "dev\nstage\nokc1", description: 'test select one', name: 'firstParam']
+      param = input(message:'Select cluster', parameters: [
+          [$class: 'ChoiceParameterDefinition', choices: "dev\nstage\nokc1", description: 'test select one', name: 'sel_cluster']
+          [$class: 'ChoiceParameterDefinition', choices: "dev\nstage\nokc1", description: 'test select one', name: 'sel_namespace']
       ])
+      cluster = param['sel_cluster']
+      namespace = param['sel_namespace']
       echo ("user input : " + cluster)
+      echo ("user input : " + namespace)
       container("builder") {
-        butler.env_cluster(cluster)
-
+//        butler.env_cluster(cluster)
+        butler.scan_helm(cluster, namespace)
       }
     }
     stage("Rollback") {

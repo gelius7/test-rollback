@@ -33,21 +33,21 @@ podTemplate(label: label, containers: [
         cluster = param
       }
     }
-    stage("Select namespace") {
-      container("builder") {
-        def nmspace_list = butler.scan_helm(cluster)
-        echo nmspace_list
-
-        echo "Select your namespace"
-        param = input(message:'Input Parameters ', parameters: [
-            [$class: 'ChoiceParameterDefinition', choices: nmspace_list, description: 'Select cluster', name: 'sel_cluster']
-        ])
-        namespace = param
-      }
-    }
+//    stage("Select namespace") {
+//      container("builder") {
+//        def nmspace_list = butler.scan_helm(cluster)
+//        echo nmspace_list
+//
+//        echo "Select your namespace"
+//        param = input(message:'Input Parameters ', parameters: [
+//            [$class: 'ChoiceParameterDefinition', choices: nmspace_list, description: 'Select cluster', name: 'sel_cluster']
+//        ])
+//        namespace = param
+//      }
+//    }
     stage("Select Image") {
       container("builder") {
-        def list = butler.scan_helm_namespace(namespace)
+        def list = butler.scan_helm_namespace(namespace,cluster)
 
         echo "Select your Image"
         param = input(message:'Input Parameters ', parameters: [

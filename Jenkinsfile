@@ -6,6 +6,10 @@ def REPOSITORY_SECRET = ""
 def SLACK_TOKEN_DEV = ""
 def SLACK_TOKEN_DQA = ""
 
+def cluster = "cc"
+def namespace = "nn"
+def revision = "rr"
+
 @Library("github.com/opsnow-tools/valve-butler")
 def butler = new com.opsnow.valve.v7.Butler()
 def label = "worker-${UUID.randomUUID().toString()}"
@@ -23,11 +27,10 @@ podTemplate(label: label, containers: [
 ]) {
   node(label) {
     stage("Input Parameters") {
-      def cluster = input(message:'Select cluster', parameters: [
-            [$class: 'ChoiceParameterDefinition', choices: "dev\nstage\nokc1", description: 'test select one', name: 'firstParam']
-        ])
-        echo ("user input : " + cluster)
-
+      cluster = input(message:'Select cluster', parameters: [
+          [$class: 'ChoiceParameterDefinition', choices: "dev\nstage\nokc1", description: 'test select one', name: 'firstParam']
+      ])
+      echo ("user input : " + cluster)
     }
     stage("Rollback") {
       container("builder") {
